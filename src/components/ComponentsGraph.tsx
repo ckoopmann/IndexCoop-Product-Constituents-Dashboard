@@ -61,7 +61,7 @@ function ComponentsGraph(props: { name: string }) {
   console.log(gradient);
 
   function formatToBnUSD(value: number) {
-    return `$ ${new Number(value / 1000000000).toPrecision(4)}bn`;
+    return `$ ${Number(value / 1000000000).toPrecision(4)}bn`;
   }
 
   function calculateTotalMarketCap(values: Record<string, any>) {
