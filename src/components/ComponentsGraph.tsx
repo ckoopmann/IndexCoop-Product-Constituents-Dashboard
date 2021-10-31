@@ -1,5 +1,14 @@
 import axios from "axios";
 import { useState, useEffect } from "react";
+import {
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
 
 const COMPONENTS: Record<
   string,
@@ -77,9 +86,12 @@ const COMPONENTS: Record<
   ],
 };
 
+const DAYS = 30;
+
 async function getMarketCapData(id: string) {
-  const apiUrl = `https://api.coingecko.com/api/v3/coins/${id}/market_chart?vs_currency=usd&days=30&interval=daily`;
+  const apiUrl = `https://api.coingecko.com/api/v3/coins/${id}/market_chart?vs_currency=usd&days=${DAYS}&interval=daily`;
   const response = await axios.get(apiUrl);
+
   const marketCapsUSD = response.data.market_caps.map(
     (arr: number[]) => arr[1]
   );
@@ -87,22 +99,66 @@ async function getMarketCapData(id: string) {
 }
 
 function ComponentsGraph(props: { name: string }) {
-  const [marketCapData, setMarketCapData] = useState<Record<string, number[]>>(
-    {}
-  );
+  const dates = Array.from({ length: DAYS + 1 }, (_, index) => {
+    return {
+      date: new Date(new Date().setDate(new Date().getDate() - (DAYS - index))),
+    };
+  });
+  const [marketCapData, setMarketCapData] =
+    useState<Array<Record<string, any>>>(dates);
   useEffect(() => {
     for (const { symbol, coingeckoApiId } of COMPONENTS[props.name]) {
       getMarketCapData(coingeckoApiId).then((marketCapsUSD) => {
         const newMarketCapData = marketCapData;
-        newMarketCapData[symbol] = marketCapsUSD;
+        marketCapsUSD.forEach((value: number, i: number) => {
+          newMarketCapData[i][symbol] = value;
+        });
 
         setMarketCapData(newMarketCapData);
       });
     }
   });
+
   return (
     <div className="ComponentsGraph">
       <h1>{props.name}</h1>
+      <AreaChart
+        width={500}
+        height={400}
+        data={marketCapData}
+        margin={{
+          top: 10,
+          right: 30,
+          left: 0,
+          bottom: 0,
+        }}
+      >
+        <CartesianGrid strokeDasharray="3 3" />
+        <XAxis dataKey="date" />
+        <YAxis />
+        <Tooltip />
+        <Area
+          type="monotone"
+          dataKey="AAVE"
+          stackId="1"
+          stroke="#8884d8"
+          fill="#8884d8"
+        />
+        <Area
+          type="monotone"
+          dataKey="UNI"
+          stackId="1"
+          stroke="#82ca9d"
+          fill="#82ca9d"
+        />
+        <Area
+          type="monotone"
+          dataKey="YFI"
+          stackId="1"
+          stroke="#ffc658"
+          fill="#ffc658"
+        />
+      </AreaChart>
     </div>
   );
 }
