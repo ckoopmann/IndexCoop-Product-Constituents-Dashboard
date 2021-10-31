@@ -1,5 +1,6 @@
 import axios from "axios";
 import gradstop from "gradstop";
+import COMPONENTS from "./productComponentMapping"
 
 import { useState, useEffect } from "react";
 import {
@@ -11,82 +12,6 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-
-const COMPONENTS: Record<
-  string,
-  Array<{ symbol: string; coingeckoApiId: string }>
-> = {
-  DPI: [
-    {
-      symbol: "UNI",
-      coingeckoApiId: "uniswap",
-    },
-    {
-      symbol: "AAVE",
-      coingeckoApiId: "aave",
-    },
-    {
-      symbol: "MKR",
-      coingeckoApiId: "maker",
-    },
-    {
-      symbol: "SUSHI",
-      coingeckoApiId: "sushi",
-    },
-    {
-      symbol: "COMP",
-      coingeckoApiId: "compound-governance-token",
-    },
-    {
-      symbol: "SNX",
-      coingeckoApiId: "havven",
-    },
-    {
-      symbol: "YFI",
-      coingeckoApiId: "yearn-finance",
-    },
-    {
-      symbol: "REN",
-      coingeckoApiId: "republic-protocol",
-    },
-    {
-      symbol: "LRC",
-      coingeckoApiId: "loopring",
-    },
-    {
-      symbol: "KNC",
-      coingeckoApiId: "kyber-network-crystal",
-    },
-    {
-      symbol: "BAL",
-      coingeckoApiId: "balancer",
-    },
-    {
-      symbol: "BADGER",
-      coingeckoApiId: "badger-dao",
-    },
-    {
-      symbol: "FARM",
-      coingeckoApiId: "harvest-finance",
-    },
-    {
-      symbol: "INST",
-      coingeckoApiId: "instadapp",
-    },
-    {
-      symbol: "CREAM",
-      coingeckoApiId: "cream-2",
-    },
-    {
-      symbol: "VSP",
-      coingeckoApiId: "vesper-finance",
-    },
-    {
-      symbol: "MTA",
-      coingeckoApiId: "meta",
-    },
-  ],
-};
 
 const DAYS = 30;
 
@@ -106,6 +31,7 @@ function ComponentsGraph(props: { name: string }) {
       date: new Date(new Date().setDate(new Date().getDate() - (DAYS - index))),
     };
   });
+
   const [marketCapData, setMarketCapData] =
     useState<Array<Record<string, any>>>(dates);
   useEffect(() => {
@@ -120,6 +46,11 @@ function ComponentsGraph(props: { name: string }) {
       });
     }
   });
+
+  const [totalMarketCap, setTotalMarketCap] = useState(0)
+    useEffect(() => {
+        setTotalMarketCap(calculateTotalMarketCap(marketCapData.at(-1) ?? {}))
+    }, [marketCapData])
 
   const gradient = gradstop({
     stops: COMPONENTS[props.name].length,
@@ -141,14 +72,10 @@ function ComponentsGraph(props: { name: string }) {
     return sum;
   }
 
-  const totalCurrentMarketCap = calculateTotalMarketCap(
-    marketCapData.at(-1) ?? {}
-  );
-
   return (
     <div className="ComponentsGraph">
       <h1>
-        {props.name} - Total Component Market Cap: {formatToBnUSD(totalCurrentMarketCap)}
+        {props.name} - Total Component Market Cap: {formatToBnUSD(totalMarketCap)}
       </h1>
       <ResponsiveContainer width="100%" aspect={3}>
         <AreaChart
