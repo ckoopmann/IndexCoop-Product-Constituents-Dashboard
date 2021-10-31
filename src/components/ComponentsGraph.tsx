@@ -132,9 +132,24 @@ function ComponentsGraph(props: { name: string }) {
     return `$ ${new Number(value / 1000000000).toPrecision(4)}bn`;
   }
 
+  function calculateTotalMarketCap(values: Record<string, any>) {
+    const sum = Object.entries(values).reduce((total, pair) => {
+      const [name, value]: [string, any] = pair;
+      if (name !== "date") return total + value;
+      return total;
+    }, 0);
+    return sum;
+  }
+
+  const totalCurrentMarketCap = calculateTotalMarketCap(
+    marketCapData.at(-1) ?? {}
+  );
+
   return (
     <div className="ComponentsGraph">
-      <h1>{props.name}</h1>
+      <h1>
+        {props.name} - Total Component Market Cap: {formatToBnUSD(totalCurrentMarketCap)}
+      </h1>
       <ResponsiveContainer width="100%" aspect={3}>
         <AreaChart
           width={500}
@@ -157,11 +172,7 @@ function ComponentsGraph(props: { name: string }) {
             labelFormatter={(value, payload) => {
               const values = payload[0]?.payload;
               if (values != null) {
-                const sum = Object.entries(values).reduce((total, pair) => {
-                  const [name, value]: [string, any] = pair;
-                  if (name !== "date") return total + value;
-                  return total;
-                }, 0);
+                const sum = calculateTotalMarketCap(values);
                 const sumString = formatToBnUSD(sum);
                 return `${value.toLocaleDateString()} - Total: ${sumString}`;
               }
