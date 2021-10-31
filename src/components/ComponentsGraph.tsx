@@ -58,7 +58,6 @@ function ComponentsGraph(props: { name: string }) {
     inputFormat: "hex",
     colorArray: ["#343838", "#00DFFC"],
   });
-  console.log(gradient);
 
   function formatToBnUSD(value: number) {
     return `$ ${Number(value / 1000000000).toPrecision(4)}bn`;
