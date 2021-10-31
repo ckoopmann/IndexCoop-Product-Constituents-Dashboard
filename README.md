@@ -1,6 +1,7 @@
-# Getting Started with Create React App
+# Index Components Marketcap Dashboard
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This project implements a Dashboard showing the total market cap of the underlying tokens for different [Indexcoop](https://www.indexcoop.com/) products.
+The data comes from the [Coingecko API](https://www.coingecko.com/en/api) and is visualised using [Recharts](https://recharts.org/en-US/).
 
 ## Available Scripts
 
