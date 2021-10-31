@@ -6,6 +6,7 @@ function App() {
   return (
     <div className="App">
         <ComponentsGraph name="DPI"/>
+        <ComponentsGraph name="MVI"/>
     </div>
   );
 }

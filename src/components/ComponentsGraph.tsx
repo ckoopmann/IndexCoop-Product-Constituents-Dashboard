@@ -1,6 +1,6 @@
 import axios from "axios";
 import gradstop from "gradstop";
-import COMPONENTS from "./productComponentMapping"
+import COMPONENTS from "./productComponentMapping";
 
 import { useState, useEffect } from "react";
 import {
@@ -43,14 +43,15 @@ function ComponentsGraph(props: { name: string }) {
         });
 
         setMarketCapData(newMarketCapData);
+        updateTotalMarketCap();
       });
     }
   });
 
-  const [totalMarketCap, setTotalMarketCap] = useState(0)
-    useEffect(() => {
-        setTotalMarketCap(calculateTotalMarketCap(marketCapData.at(-1) ?? {}))
-    }, [marketCapData])
+  const [totalMarketCap, setTotalMarketCap] = useState(0);
+  function updateTotalMarketCap() {
+    setTotalMarketCap(calculateTotalMarketCap(marketCapData.at(-1) ?? {}));
+  }
 
   const gradient = gradstop({
     stops: COMPONENTS[props.name].length,
@@ -75,7 +76,8 @@ function ComponentsGraph(props: { name: string }) {
   return (
     <div className="ComponentsGraph">
       <h1>
-        {props.name} - Total Component Market Cap: {formatToBnUSD(totalMarketCap)}
+        {props.name} - Total Component Market Cap:{" "}
+        {formatToBnUSD(totalMarketCap)}
       </h1>
       <ResponsiveContainer width="100%" aspect={3}>
         <AreaChart
