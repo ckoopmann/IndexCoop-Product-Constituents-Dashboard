@@ -50,7 +50,7 @@ function ComponentsGraph(props: { name: string }) {
 
   const [totalMarketCap, setTotalMarketCap] = useState(0);
   function updateTotalMarketCap() {
-    setTotalMarketCap(calculateTotalMarketCap(marketCapData.at(-1) ?? {}));
+    setTotalMarketCap(calculateTotalMarketCap(marketCapData[marketCapData.length -1] ?? {}));
   }
 
   const gradient = gradstop({
