@@ -1,4 +1,6 @@
 import axios from "axios";
+import gradstop from "gradstop";
+
 import { useState, useEffect } from "react";
 import {
   AreaChart,
@@ -119,6 +121,13 @@ function ComponentsGraph(props: { name: string }) {
     }
   });
 
+  const gradient = gradstop({
+    stops: COMPONENTS[props.name].length,
+    inputFormat: "hex",
+    colorArray: ["#343838", "#00DFFC"],
+  });
+  console.log(gradient);
+
   function formatToBnUSD(value: number) {
     return `$ ${new Number(value / 1000000000).toPrecision(4)}bn`;
   }
@@ -160,14 +169,14 @@ function ComponentsGraph(props: { name: string }) {
             }}
             formatter={formatToBnUSD}
           />
-          {COMPONENTS[props.name].map(({symbol}) => (
+          {COMPONENTS[props.name].map(({ symbol }, index) => (
             <Area
               type="monotone"
               dataKey={symbol}
               key={symbol}
               stackId="1"
-              stroke="#8884d8"
-              fill="#8884d8"
+              stroke={gradient[index]}
+              fill={gradient[index]}
             />
           ))}
         </AreaChart>
