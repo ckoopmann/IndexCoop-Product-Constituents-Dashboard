@@ -94,6 +94,28 @@ const COMPONENTS: Record<
       coingeckoApiId: "enjincoin",
     },
   ],
+  DATA: [
+    {
+      symbol: "GRT",
+      coingeckoApiId: "the-graph",
+    },
+    {
+      symbol: "LINK",
+      coingeckoApiId: "the-graph",
+    },
+    {
+      symbol: "FIL",
+      coingeckoApiId: "filecoin",
+    },
+    {
+      symbol: "BAT",
+      coingeckoApiId: "basic-attention-token",
+    },
+    {
+      symbol: "LPT",
+      coingeckoApiId: "livepeer",
+    },
+  ],
 };
 
 export default COMPONENTS;

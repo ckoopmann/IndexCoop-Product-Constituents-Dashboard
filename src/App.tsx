@@ -7,6 +7,7 @@ function App() {
     <div className="App">
         <ComponentsGraph name="DPI"/>
         <ComponentsGraph name="MVI"/>
+        <ComponentsGraph name="DATA"/>
     </div>
   );
 }
