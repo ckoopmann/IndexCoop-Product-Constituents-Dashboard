@@ -11,7 +11,6 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-  Text,
 } from "recharts";
 
 const DAYS = 30;
@@ -58,7 +57,6 @@ function ComponentsGraph(props: { name: string }) {
             });
 
             setMarketCapData(newMarketCapData);
-            updateTotalMarketCap();
           });
         }
       );
@@ -69,7 +67,12 @@ function ComponentsGraph(props: { name: string }) {
         })
         .finally(() => setMarketCapsLoading(false));
     }
-  });
+  }, [marketCapsLoading, props.name, marketCapsLoaded, marketCapData]);
+  useEffect(() => {
+    setTotalMarketCap(
+      calculateTotalMarketCap(marketCapData[marketCapData.length - 1] ?? {})
+    );
+  }, [marketCapData]);
 
   const [aumData, setAumData] = useState<Array<Record<string, any>>>(
     Array(DAYS)
@@ -87,6 +90,7 @@ function ComponentsGraph(props: { name: string }) {
         return {};
       })
   );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (aumLoaded && marketCapsLoaded) {
       const newCombinedData = combinedData;
@@ -103,7 +107,7 @@ function ComponentsGraph(props: { name: string }) {
       });
       setCombinedData(newCombinedData);
     }
-  }, [aumLoaded, marketCapsLoaded]);
+  });
 
   const [currentAum, setCurrentAum] = useState(0);
   useEffect(() => {
@@ -124,11 +128,6 @@ function ComponentsGraph(props: { name: string }) {
   });
 
   const [totalMarketCap, setTotalMarketCap] = useState(0);
-  function updateTotalMarketCap() {
-    setTotalMarketCap(
-      calculateTotalMarketCap(marketCapData[marketCapData.length - 1] ?? {})
-    );
-  }
 
   const gradient = gradstop({
     stops: COMPONENTS[props.name].length,
