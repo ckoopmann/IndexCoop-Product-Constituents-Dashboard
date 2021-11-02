@@ -11,7 +11,6 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-  Text,
 } from "recharts";
 
 const DAYS = 30;
@@ -41,6 +40,7 @@ function ComponentsGraph(props: { name: string }) {
   );
   const [marketCapsLoaded, setMarketCapsLoaded] = useState(false);
   const [marketCapsLoading, setMarketCapsLoading] = useState(false);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (!(marketCapsLoaded || marketCapsLoading)) {
       setMarketCapsLoading(true);
@@ -103,6 +103,7 @@ function ComponentsGraph(props: { name: string }) {
       });
       setCombinedData(newCombinedData);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [aumLoaded, marketCapsLoaded]);
 
   const [currentAum, setCurrentAum] = useState(0);
@@ -171,47 +172,51 @@ function ComponentsGraph(props: { name: string }) {
   return (
     <div className="ComponentsGraph">
       <h1>{props.name}</h1>
-      <div>
-        <h3>Total Component Market Cap: {formatToBnUSD(totalMarketCap)}</h3>
-        <ResponsiveContainer width="100%" aspect={3}>
-          <AreaChart
-            width={500}
-            height={400}
-            data={marketCapData}
-            margin={{
-              top: 10,
-              right: 30,
-              left: 0,
-              bottom: 0,
-            }}
-          >
-            <CartesianGrid strokeDasharray="3 3"></CartesianGrid>
-            <XAxis dataKey="date" tickFormatter={dateFormatter} />
-            <YAxis tickFormatter={(value) => `$ ${value / 1000000000}bn`} />
-            <Tooltip
-              labelFormatter={(value, payload) => {
-                const values = payload[0]?.payload;
-                if (values != null) {
-                  const sum = calculateTotalMarketCap(values);
-                  const sumString = formatToBnUSD(sum);
-                  return `${dateFormatter(value)} Total: ${sumString}`;
-                }
-                return dateFormatter(value);
+      {marketCapsLoaded && (
+        <div>
+          <h3>Total Component Market Cap: {formatToBnUSD(totalMarketCap)}</h3>
+          <ResponsiveContainer width="100%" aspect={3}>
+            <AreaChart
+              width={500}
+              height={400}
+              data={marketCapData}
+              margin={{
+                top: 10,
+                right: 30,
+                left: 0,
+                bottom: 0,
               }}
-              formatter={formatToBnUSD}
-            />
-            {COMPONENTS[props.name].map(({ symbol }, index) => (
-              <Area
-                type="monotone"
-                dataKey={symbol}
-                key={symbol}
-                stackId="1"
-                stroke={gradient[index]}
-                fill={gradient[index]}
+            >
+              <CartesianGrid strokeDasharray="3 3"></CartesianGrid>
+              <XAxis dataKey="date" tickFormatter={dateFormatter} />
+              <YAxis tickFormatter={(value) => `$ ${value / 1000000000}bn`} />
+              <Tooltip
+                labelFormatter={(value, payload) => {
+                  const values = payload[0]?.payload;
+                  if (values != null) {
+                    const sum = calculateTotalMarketCap(values);
+                    const sumString = formatToBnUSD(sum);
+                    return `${dateFormatter(value)} Total: ${sumString}`;
+                  }
+                  return dateFormatter(value);
+                }}
+                formatter={formatToBnUSD}
               />
-            ))}
-          </AreaChart>
-        </ResponsiveContainer>
+              {COMPONENTS[props.name].map(({ symbol }, index) => (
+                <Area
+                  type="monotone"
+                  dataKey={symbol}
+                  key={symbol}
+                  stackId="1"
+                  stroke={gradient[index]}
+                  fill={gradient[index]}
+                />
+              ))}
+            </AreaChart>
+          </ResponsiveContainer>
+        </div>
+      )}
+      {marketCapsLoaded && aumLoaded && (
         <div>
           <h3>
             Current AUM: {formatToMnUSD(currentAum)} - Percentage of component
@@ -249,8 +254,8 @@ function ComponentsGraph(props: { name: string }) {
               <Area type="monotone" dataKey="ratio" key="ratio" stackId="1" />
             </AreaChart>
           </ResponsiveContainer>
-        </div>{" "}
-      </div>
+        </div>
+      )}
     </div>
   );
 }
