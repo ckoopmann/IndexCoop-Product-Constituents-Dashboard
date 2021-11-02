@@ -19,27 +19,29 @@ async function getMarketCapData(id: string) {
   const apiUrl = `https://api.coingecko.com/api/v3/coins/${id}/market_chart?vs_currency=usd&days=${DAYS}&interval=daily`;
   const response = await axios.get(apiUrl);
 
-  const marketCapsUSD = response.data.market_caps.map(
-    (arr: number[]) => arr[1]
-  );
-  return marketCapsUSD;
+  return response.data.market_caps;
 }
 
 function ComponentsGraph(props: { name: string }) {
-  const dates = Array.from({ length: DAYS + 1 }, (_, index) => {
-    return {
-      date: new Date(new Date().setDate(new Date().getDate() - (DAYS - index))),
-    };
-  });
-
-  const [marketCapData, setMarketCapData] =
-    useState<Array<Record<string, any>>>(dates);
+  const [marketCapData, setMarketCapData] = useState<
+    Array<Record<string, any>>
+  >(
+    Array(DAYS)
+      .fill({})
+      .map(() => {
+        return {};
+      })
+  );
   useEffect(() => {
     for (const { symbol, coingeckoApiId } of COMPONENTS[props.name]) {
       getMarketCapData(coingeckoApiId).then((marketCapsUSD) => {
         const newMarketCapData = marketCapData;
-        marketCapsUSD.forEach((value: number, i: number) => {
-          newMarketCapData[i][symbol] = value;
+        const addDate = marketCapData[0]?.date == null;
+        marketCapsUSD.forEach((value: number[], i: number) => {
+          if (newMarketCapData[i]) {
+            newMarketCapData[i][symbol] = value[1];
+            if (addDate) newMarketCapData[i].date = new Date(value[0]);
+          }
         });
 
         setMarketCapData(newMarketCapData);
@@ -50,7 +52,9 @@ function ComponentsGraph(props: { name: string }) {
 
   const [totalMarketCap, setTotalMarketCap] = useState(0);
   function updateTotalMarketCap() {
-    setTotalMarketCap(calculateTotalMarketCap(marketCapData[marketCapData.length -1] ?? {}));
+    setTotalMarketCap(
+      calculateTotalMarketCap(marketCapData[marketCapData.length - 1] ?? {})
+    );
   }
 
   const gradient = gradstop({
@@ -72,6 +76,15 @@ function ComponentsGraph(props: { name: string }) {
     return sum;
   }
 
+  function dateFormatter(value: Date) {
+    try {
+      // Format date based on UTC time to get the same days as in coingecko
+      return `${value.getUTCFullYear()}-${value.getUTCMonth()+1}-${value.getUTCDate()}`;
+    } catch (e) {
+      return "";
+    }
+  }
+
   return (
     <div className="ComponentsGraph">
       <h1>
@@ -91,10 +104,7 @@ function ComponentsGraph(props: { name: string }) {
           }}
         >
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis
-            dataKey="date"
-            tickFormatter={(value) => value.toLocaleDateString()}
-          />
+          <XAxis dataKey="date" tickFormatter={dateFormatter} />
           <YAxis tickFormatter={(value) => `$ ${value / 1000000000}bn`} />
           <Tooltip
             labelFormatter={(value, payload) => {
@@ -102,7 +112,7 @@ function ComponentsGraph(props: { name: string }) {
               if (values != null) {
                 const sum = calculateTotalMarketCap(values);
                 const sumString = formatToBnUSD(sum);
-                return `${value.toLocaleDateString()} - Total: ${sumString}`;
+                return `${dateFormatter(value)} - Total: ${sumString}`;
               }
               return value.toLocaleDateString();
             }}
