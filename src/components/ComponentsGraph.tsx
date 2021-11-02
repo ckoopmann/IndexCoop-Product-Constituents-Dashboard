@@ -69,7 +69,8 @@ function ComponentsGraph(props: { name: string }) {
         })
         .finally(() => setMarketCapsLoading(false));
     }
-  });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const [aumData, setAumData] = useState<Array<Record<string, any>>>(
     Array(DAYS)
@@ -87,6 +88,7 @@ function ComponentsGraph(props: { name: string }) {
         return {};
       })
   );
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (aumLoaded && marketCapsLoaded) {
       const newCombinedData = combinedData;
@@ -103,8 +105,7 @@ function ComponentsGraph(props: { name: string }) {
       });
       setCombinedData(newCombinedData);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [aumLoaded, marketCapsLoaded]);
+  });
 
   const [currentAum, setCurrentAum] = useState(0);
   useEffect(() => {
@@ -122,7 +123,8 @@ function ComponentsGraph(props: { name: string }) {
         setAumLoaded(true);
       });
     }
-  });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const [totalMarketCap, setTotalMarketCap] = useState(0);
   function updateTotalMarketCap() {
