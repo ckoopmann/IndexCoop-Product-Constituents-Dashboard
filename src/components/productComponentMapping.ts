@@ -93,6 +93,42 @@ const COMPONENTS: Record<
       symbol: "ENJ",
       coingeckoApiId: "enjincoin",
     },
+    {
+      symbol: "WAXE",
+      coingeckoApiId: "waxe",
+    },
+    {
+      symbol: "AUDIO",
+      coingeckoApiId: "audius",
+    },
+    {
+      symbol: "DG",
+      coingeckoApiId: "decentral-games",
+    },
+    {
+      symbol: "ERN",
+      coingeckoApiId: "ethernity-chain",
+    },
+    {
+      symbol: "WHALE",
+      coingeckoApiId: "whale",
+    },
+    {
+      symbol: "RARI",
+      coingeckoApiId: "rarible",
+    },
+    {
+      symbol: "TVK",
+      coingeckoApiId: "terra-virtua-kolect",
+    },
+    {
+      symbol: "REVV",
+      coingeckoApiId: "revv",
+    },
+    {
+      symbol: "NFTX",
+      coingeckoApiId: "nftx",
+    },
   ],
   DATA: [
     {
@@ -114,6 +150,14 @@ const COMPONENTS: Record<
     {
       symbol: "LPT",
       coingeckoApiId: "livepeer",
+    },
+    {
+      symbol: "OCEAN",
+      coingeckoApiId: "ocean-protocol",
+    },
+    {
+      symbol: "NMR",
+      coingeckoApiId: "numeraire",
     },
   ],
 };
